@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+// Go Only  Headers
+
+// desc: 
+package users;
+
+option go_package = "./src/gRPC/pb/users";
+
+
+
+// desc: 
+service UsersServices {
+   rpc Ping(PingMsg) returns (PongMsg);
+   
+   rpc Create(CreateUserRequest) returns (UserResponse);
+   rpc Update(UpdateUserRequest) returns (UserResponse);
+   rpc Delete(UserIdRequest) returns (UserResponse);
+   rpc GetAll(GetAllUsersRequest) returns ( stream  UserResponse ); 
+   rpc GetById(UserIdRequest) returns ( UserResponse );
+   
+   rpc Follow(UserIdRequest) returns  (OK);
+   rpc Unfollow(UserIdRequest) returns (OK);
+   rpc GetFollowers(UserIdRequest) returns (stream UserResponse);
+   rpc GetFollowings(UserIdRequest) returns (stream UserResponse);
+
+   rpc RedifinePassword(RedifinePasswordMessage) returns (OK);
+
+   rpc Login (LoginRequest) returns (TokenMessage);
+
+}
+
+// desc: PingMsg is a message to check if the service is listining 
+message PingMsg{}
+// desc: PongMsg is the return to a Ping check
+message PongMsg{ string pong = 1; } 
+
+// desc: Ok is the message to return when the operation does not need a UserResponse, By example when a user follow another user this message is the return. 
+message OK {
+    bool OK = 1;
+    string message = 2;
+}
+
+// desc: CreateUserRequest represents a requst to create a new User in the service
+message CreateUserRequest {
+   string Name = 1;
+   string Nick = 2;
+   string Email = 3;
+   string Password = 4;
+}
+// desc: GetAllUsersRequest represents a request to get a User in the service
+// The NameOrNick is a string to search by name or nick if empty by pattern the sevice responses the users that the user who request follows.
+message GetAllUsersRequest {
+    string NameOrNick = 1;
+}
+// desc: UserIdRequest represents the request to all services that just need a user id
+message UserIdRequest {
+    int64 userId = 1;
+}
+// desc: UpdateUserRequest is the message to update a user 
+message UpdateUserRequest {
+    int64 id = 1;
+    string Name = 2;
+    string Nick = 3;
+    string Email = 4;
+}
+
+// desc: LoginRequest is the message to get the JWT token 
+message LoginRequest {
+    string email = 1;
+    string password = 2; 
+}
+
+// desc: UserResponse is the message that have all infos of a user 
+message UserResponse {
+    int64 id = 1;
+    string Name = 2;
+    string Nick = 3;
+    string Email = 4;
+    string createdAt = 6;
+    string updatedAt = 7;
+}
+// desc: RepeatedUserResponse is the response to get any users 
+message RepeatedUserResponse {
+    repeated UserResponse users = 1;
+}
+// desc: TokenMessage is the message with the user ID and a JWT Token
+message TokenMessage {
+    int64 userId = 1;
+    string JWTToken = 2;
+}
+
+message RedifinePasswordMessage {
+    string NewPassword = 1;
+    string OldPassword = 2;
+}
+
