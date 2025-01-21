@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.2
-// source: src/gRPC/proto/users.proto
+// source: users-service/src/gRPC/proto/users.proto
 
 // Go Only  Headers
 
@@ -553,5 +553,5 @@ var UsersServices_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "src/gRPC/proto/users.proto",
+	Metadata: "users-service/src/gRPC/proto/users.proto",
 }
