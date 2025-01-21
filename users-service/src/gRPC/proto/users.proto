@@ -33,7 +33,7 @@ service UsersServices {
 // desc: PingMsg is a message to check if the service is listining 
 message PingMsg{}
 // desc: PongMsg is the return to a Ping check
-message PongMsg{ string pong = 1; } 
+message PongMsg{ string ping = 1; } 
 
 // desc: Ok is the message to return when the operation does not need a UserResponse, By example when a user follow another user this message is the return. 
 message OK {

@@ -1,7 +1,7 @@
 package main
 
-import "github.com/Joao-lucas-felix/DevBook-gRPC/users-service/src/gRPC/server"
+import users_service "github.com/Joao-lucas-felix/DevBook-gRPC/users-service"
 
 func main() {
-	server.BootstrapServer()
+	users_service.BootstrapService()
 }
