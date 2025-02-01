@@ -68,6 +68,5 @@ func GenConn(dbPath string) (*sql.DB, error) {
 	if err := db.Ping(); err != nil{
 		return nil, err
 	}
-	log.Println("Successfully conected with the database!")
 	return db, nil
 }
