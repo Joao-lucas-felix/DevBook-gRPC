@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/Joao-lucas-felix/DevBook-gRPC/users-service/src/gRPC/pb/users"
@@ -62,14 +63,16 @@ func (s Server) GetAll(req *users.GetAllUsersRequest, srv users.UsersServices_Ge
 	return nil
 }
 
-// GetAll receive a message with the name or nick of the user and return with a stream of all users where the name or nick are like the received.
+// GetById receive a message with the ID of the user and return the data of this user if exists. 
 func (s Server) GetById(ctx context.Context, req *users.UserIdRequest) (*users.UserResponse, error) {
 	userID := req.GetUserId()
 	usersGet, err := services.GetById(userID)
 	if err != nil {
 		return nil, err
 	}
-
+	if usersGet.ID == 0 {
+		return nil, errors.New("the user does not exists")
+	}
 	return &users.UserResponse{
 		Id:        int64(usersGet.ID),
 		Name:      usersGet.Name,
@@ -77,5 +80,23 @@ func (s Server) GetById(ctx context.Context, req *users.UserIdRequest) (*users.U
 		Email:     usersGet.Email,
 		CreatedAt: usersGet.CreatedAt.String(),
 		UpdatedAt: usersGet.UpdatedAt.String(),
+	}, nil
+}
+
+// Update receive a message with the data to update a specific user
+func (s Server) Update(ctx context.Context, req *users.UpdateUserRequest) (*users.UserResponse, error){
+	user, err :=  services.Update(req)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return &users.UserResponse{
+		Id:        int64(user.ID),
+		Name:      user.Name,
+		Nick:      user.Nick,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt.String(),
+		UpdatedAt: user.UpdatedAt.String(),
 	}, nil
 }
