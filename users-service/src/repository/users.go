@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/Joao-lucas-felix/DevBook-gRPC/users-service/src/models"
 	"github.com/Joao-lucas-felix/DevBook-gRPC/users-service/src/security"
@@ -97,6 +98,42 @@ func (repository Repository) Delete(id int64) (models.User, error) {
 }
 
 // FindAll persists a user in the database
-func (repository Repository) FindAll() ([]models.User, error) {
-	return nil, nil
+func (repository Repository) FindAll(nameOrNick string) ([]models.User, error) {
+
+	//format the string to %% s %%
+	querieFormatedString := fmt.Sprintf("%%%s%%", nameOrNick)
+	rows, err := repository.db.Query(queries["findAll"], querieFormatedString, querieFormatedString)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var users []models.User
+	for rows.Next() {
+		var user models.User
+		// SELECT id, name, nick ,email, created_at, updated_at
+		if err := rows.Scan(&user.ID, &user.Name, &user.Nick, &user.Email, &user.CreatedAt, &user.UpdatedAt); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
+func (repository Repository) FindById(userID int64) (models.User, error) {
+
+	rows, err := repository.db.Query(queries["findById"], userID)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	defer rows.Close()
+	var user models.User
+	// SELECT id, name, nick ,email, created_at, updated_at
+	if rows.Next() {
+		if err := rows.Scan(&user.ID, &user.Name, &user.Nick, &user.Email, &user.CreatedAt, &user.UpdatedAt); err != nil {
+			return models.User{}, err
+		}
+	}
+	return user, nil
 }

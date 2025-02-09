@@ -24,3 +24,20 @@ func Create( u *users.CreateUserRequest ) (models.User, error) {
 	r  := repository.NewUserRepository(db)
 	return r.Create(user)
 }
+func GetAll(nickOrEmail string) ([]models.User, error) {
+	db, err := database.GenConn(DBPATH)
+	if err != nil {
+		return nil, err
+	}
+	r := repository.NewUserRepository(db)
+	return r.FindAll(nickOrEmail)
+}
+
+func GetById(userID int64) (models.User, error) {
+	db, err := database.GenConn(DBPATH)
+	if err != nil {
+		return models.User{}, err
+	}
+	r := repository.NewUserRepository(db)
+	return r.FindById(userID)
+}
