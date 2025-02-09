@@ -16,7 +16,7 @@ func BootstrapServer() error {
 	// 	log.Fatal(err)
 	// }
 	log.Println("Starting gRPC server in the prot :9090")
-	listner, err := net.Listen("tcp", ":9090")
+	listener, err := net.Listen("tcp", ":9090")
 	if err != nil {
 		return err
 	}
@@ -24,5 +24,5 @@ func BootstrapServer() error {
 	s := grpc.NewServer()
 	users.RegisterUsersServicesServer(s, &Server{})
 	
-	return s.Serve(listner)
+	return s.Serve(listener)
 }
