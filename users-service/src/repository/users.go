@@ -17,7 +17,7 @@ var queries = map[string]string{
 
 	"create": " INSERT INTO users (name, nick, email, password_hash) VALUES (?, ?, ?, ?); ",
 
-	"update": " UPDATE users SET name = ?, nick = ?, email = ? WHERE id = ? ",
+	"update": "UPDATE users SET name = ?, nick = ?, email = ? WHERE id = ?;",
 
 	"delete": " DELETE FROM users u WHERE u.id = ? ",
 
@@ -75,18 +75,21 @@ func (repository Repository) Create(user models.User) (models.User, error) {
 	return userToReturn, nil
 }
 
-// Update persists a user in the database
-func (repository Repository) Update(user models.User) (models.User, error) {
-	statement, err := repository.db.Prepare(queries["create"])
+// Update change the data of a user persisted
+func (repository Repository) Update(user models.User) error {
+	statement, err := repository.db.Prepare(queries["update"])
 	if err != nil {
-		return models.User{}, err
+		return err
 	}
 	defer statement.Close()
-
-	return user, nil
+	_, err = statement.Exec(user.Name, user.Nick, user.Email, user.ID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-// Delete persists a user in the database
+// Delete remove a persisted user
 func (repository Repository) Delete(id int64) (models.User, error) {
 	statement, err := repository.db.Prepare(queries["create"])
 	if err != nil {
@@ -97,7 +100,7 @@ func (repository Repository) Delete(id int64) (models.User, error) {
 	return models.User{}, nil
 }
 
-// FindAll persists a user in the database
+// FindAll find and return all user in the database
 func (repository Repository) FindAll(nameOrNick string) ([]models.User, error) {
 
 	//format the string to %% s %%
@@ -120,6 +123,7 @@ func (repository Repository) FindAll(nameOrNick string) ([]models.User, error) {
 	return users, nil
 }
 
+// FindById find and return a user with an specific ID
 func (repository Repository) FindById(userID int64) (models.User, error) {
 
 	rows, err := repository.db.Query(queries["findById"], userID)
